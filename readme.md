@@ -2,61 +2,50 @@
 
 This is the origin Pytorch implementation of [Crossformer: Transformer Utilizing Cross-Dimension Dependency for Multivariate Time Series Forecasting](https://openreview.net/forum?id=vSVLM2j9eie).
 
-## Key Points of Crossformer
-**1. Dimension-Segment-Wise (DSW) Embedding**
-<p align="center">
-<img src=".\pic\DSW.PNG" height = "200" alt="" align=center />
+## Generate Synthetic Network Trace Data based on the Crossformer MTSF 
 
-<b>Figure 1.</b> DSW embedding. <b>Left</b>: Embedding method of previous Transformer-based model: data points in different dimensions at the same step are embedded into a vector; <b>Right</b>: DSW embedding  of Crossformer: in each dimension, nearby points over time form a segment for embedding.
-</p>
+### Dataset 
+* caida pcap 
+* urg16 netflow 
 
-**2. Two-Stage Attention (TSA) Layer**
-<p align="center">
-<img src=".\pic\TSA.PNG" height = "200" alt="" align=center />
+### Pre-process data 
 
-<b>Figure 2.</b> TSA layer. <b>Left</b>: Overall structure: the 2D vector array goes through the Cross-Time Stage and Cross-Dimension Stage to get corresponding dependency; <b>Middle</b>: Directly using MSA in Cross-Dimension Stage to build the $D$-to-$D$ 
-connection results in $O(D^2)$ complexity.  <b>Right</b>: Router mechanism for Cross-Dimension Stage: a small fixed number ($c$) of ``routers'' gather and distribute the information among dimensions. The complexity is reduced to $O(2cD) = O(D)$.
-</p>
-
-**3. Hierarchical Encoder-Decoder (HED)**
-<p align="center">
-<img src=".\pic\HED.PNG" height = "200" alt="" align=center />
-
-<b>Figure 3.</b> HED. The encoder (left) uses TSA layer and segment merging to capture dependency at different scales; the decoder (right) makes the final prediction by forecasting at each scale and adding them up.
-</p>
-
-
-## Requirements
-
-- Python 3.7.10
-- numpy==1.20.3
-- pandas==1.3.2
-- torch==1.8.1
-- einops==0.4.1
-
-## Reproducibility
-1. Put datasets to conduct experiments into folder `datasets/`. We have already put `ETTh1` and `ETTm1` into it. `WTH` and `ECL` can be downloaded from 
-https://github.com/zhouhaoyi/Informer2020. `ILI` and `Traffic` can be downloaded from https://github.com/thuml/Autoformer. Note that the `WTH` we used in the paper is the one with 12 dimensions from Informer, not the one with 21 dimensions from Autoformer.
-
-2. To get results of Crossformer with $T=168, \tau = 24, L_{seg} = 6$ on ETTh1 dataset, run:
+* pcap 
 ```
-python main_crossformer.py --data ETTh1 --in_len 168 --out_len 24 --seg_len 6 --itr 1
-```
-The model will be automatically trained and tested. The trained model will be saved in folder `checkpoints/` and evaluated metrics will be saved in folder `results/`.
-
-3. You can also evaluate a trained model by running:
-```
-python eval_crossformer.py --checkpoint_root ./checkpoints --setting_name Crossformer_ETTh1_il168_ol24_sl6_win2_fa10_dm256_nh4_el3_itr0
+python pcap-converter.py
 ```
 
-4. To reproduce all results in the paper, run following scripts to get corresponding results:
+* netflow 
+
 ```
-bash scripts/ETTh1.sh
-bash scripts/ETTm1.sh
-bash scripts/WTH.sh
-bash scripts/ECL.sh
-bash scripts/ILI.sh
-bash scripts/Traffic.sh
+python netflow-converter.py
+```
+
+### Train/Validation
+
+* netflow 
+```
+python main_crossformer.py --data Netflow --data_path updated_urg16.csv --data_dim 8 --in_len 168 --out_len 24 --seg_len 6
+```
+
+### Evaluation
+
+* netflow 
+
+```
+python eval_crossformer.py --setting_name Crossformer_Netflow_il168_ol24_sl6_win2_fa10_dm256_nh4_el3_itr0 --save_pred --inverse
+```
+
+### Synthetic data generation (Post-process)
+* netflow 
+
+```
+python generate_crossformer.py
+```
+
+To view the csv file, 
+```
+cat results/Crossformer_Netflow_il168_ol24_sl6_win2_fa10_dm256_nh4_el3_itr0/generated.csv | column -t -s, | less -S
 ```
 
 
