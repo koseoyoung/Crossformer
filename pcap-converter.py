@@ -8,10 +8,10 @@ with open('caida-raw.csv', 'r') as file:
     rows = list(reader)
 
 time_index = rows[0].index('time')
-proto_index = rows[0].index('proto')
-offset_index = rows[0].index('off')
-ihl_index = rows[0].index('ihl')
-version_index = rows[0].index('version')
+proto_index = rows[0].index('proto') # categorical data ("TCP" or "UDP")
+offset_index = rows[0].index('off') # variance is 0
+ihl_index = rows[0].index('ihl') # variance is 0
+version_index = rows[0].index('version') # variance is 0
 
 count = 0
 
@@ -28,10 +28,10 @@ for i, row in enumerate(rows):
         
     row.insert(0, converted)
             
-    del row[offset_index+1] # delete all same values coloumn or string instead of integer values 
-    del row[ihl_index+1]
-    del row[version_index+1]
-    del row[proto_index+1]
+    del row[offset_index+1] # delete the offset column since variance is 0
+    del row[ihl_index+1] # delete the ihl column since variance is 0
+    del row[version_index+1] # delete the version column since variance is 0
+    del row[proto_index+1] # delete proto column since it is categorical data
     
 print("count of items: ", count)
 

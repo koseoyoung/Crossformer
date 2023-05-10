@@ -26,8 +26,8 @@ for i, row in enumerate(rows):
         
     row.insert(0, converted)
     
-    del row[type_index+1] # delete all same values coloumn or string instead of integer values 
-    del row[proto_index+1] # delete all same values coloumn or string instead of integer values 
+    del row[type_index+1] # delete type column since it is categorical data
+    del row[proto_index+1] # delete proto column since it is categorical data
 
 print("count of items: ", count)
 
