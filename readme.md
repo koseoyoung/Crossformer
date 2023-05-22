@@ -21,11 +21,22 @@ python pcap-converter.py
 python netflow-converter.py
 ```
 
+if want to include categorical dataset:
+```
+python netflow-categorical-converter.py
+```
+
+
 ### Train/Validation
 
 * netflow 
 ```
 python main_crossformer.py --data Netflow --data_path updated_urg16.csv --data_dim 8 --in_len 168 --out_len 24 --seg_len 6
+```
+
+if want to include categorical dataset:
+```
+python main_crossformer.py --data Entire_Netflow --data_path updated_categorical_urg16.csv --data_dim 17 --in_len 168 --out_len 24 --seg_len 6
 ```
 
 * pcap 
@@ -42,6 +53,11 @@ python main_crossformer.py --data PCAP --data_path updated_pcap.csv --data_dim 1
 python eval_crossformer.py --setting_name Crossformer_Netflow_il168_ol24_sl6_win2_fa10_dm256_nh4_el3_itr0 --save_pred --inverse
 ```
 
+if want to include categorical dataset:
+```
+python eval_crossformer.py --setting_name Crossformer_Entire_Netflow_il168_ol24_sl6_win2_fa10_dm256_nh4_el3_itr0  --save_pred --inverse
+```
+
 * pcap 
 ```
 python eval_crossformer.py --setting_name Crossformer_PCAP_il168_ol24_sl6_win2_fa10_dm256_nh4_el3_itr0 --save_pred --inverse
@@ -56,6 +72,12 @@ python eval_crossformer.py --setting_name Crossformer_PCAP_il168_ol24_sl6_win2_f
 python generate_crossformer.py
 ```
 
+* netflow with categorical features 
+
+```
+python generate_netflow_categorical_crossformer.py
+```
+
 To view the csv file, 
 ```
 cat results/Crossformer_Netflow_il168_ol24_sl6_win2_fa10_dm256_nh4_el3_itr0/generated.csv | column -t -s, | less -S
@@ -63,6 +85,10 @@ cat results/Crossformer_Netflow_il168_ol24_sl6_win2_fa10_dm256_nh4_el3_itr0/gene
 
 ```
 cat results/Crossformer_PCAP_il168_ol24_sl6_win2_fa10_dm256_nh4_el3_itr0/generated.csv | column -t -s, | less -S
+```
+
+```
+cat results/Crossformer_Entire_Netflow_il168_ol24_sl6_win2_fa10_dm256_nh4_el3_itr0/generated.csv | column -t -s, | less -S
 ```
 
 

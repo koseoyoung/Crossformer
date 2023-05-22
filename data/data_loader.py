@@ -48,7 +48,15 @@ class Dataset_MTS(Dataset):
         
         cols_data = df_raw.columns[1:]
         df_data = df_raw[cols_data]
-
+        
+        categoricalColumns = []
+        for name, values in df_data.dtypes.items():
+            if values == 'object': 
+                categoricalColumns.append(name)
+        
+        # handling for categorical features
+        df_data = pd.get_dummies(data=df_data, columns=categoricalColumns, dtype=float) # Get one-hot encoding of variable
+        
         if self.scale:
             if self.scale_statistic is None:
                 self.scaler = StandardScaler()
