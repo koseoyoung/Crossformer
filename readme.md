@@ -8,7 +8,7 @@ This is the origin Pytorch implementation of [Crossformer: Transformer Utilizing
 * caida pcap 
 * urg16 netflow 
 
-### Pre-process data 
+### Pre-process data (Optional)
 
 * pcap 
 ```
