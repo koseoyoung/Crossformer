@@ -27,7 +27,7 @@ python netflow-categorical-converter.py
 ```
 
 
-### Train/Validation
+### Step 1: Train/Validation for Forecasting 
 
 * netflow 
 ```
@@ -45,7 +45,27 @@ python main_crossformer.py --data Entire_Netflow --data_path updated_categorical
 python main_crossformer.py --data PCAP --data_path updated_pcap.csv --data_dim 11 --in_len 168 --out_len 24 --seg_len 6
 ```
 
-### Evaluation
+### Step 1: Train/Validation for Generation 
+
+
+* netflow 
+```
+python main_crossformer.py --data Netflow --data_path updated_urg16.csv --data_dim 8 --in_len 1 --out_len 1 --seg_len 6
+```
+
+if want to include categorical dataset:
+```
+python main_crossformer.py --data Entire_Netflow --data_path updated_categorical_urg16.csv --data_dim 17 --in_len 1 --out_len 1 --seg_len 6
+```
+
+* pcap 
+
+```
+python main_crossformer.py --data PCAP --data_path updated_pcap.csv --data_dim 11 --in_len 1 --out_len 1 --seg_len 6
+```
+
+
+### Step 2: Evaluation for Forecasting
 
 * netflow 
 
@@ -63,8 +83,25 @@ python eval_crossformer.py --setting_name Crossformer_Entire_Netflow_il168_ol24_
 python eval_crossformer.py --setting_name Crossformer_PCAP_il168_ol24_sl6_win2_fa10_dm256_nh4_el3_itr0 --save_pred --inverse
 ```
 
+### Step 2: Evaluation for Generation 
 
-### Synthetic data generation (Post-process)
+* netflow 
+
+```
+python eval_crossformer.py --setting_name Crossformer_Netflow_il1_ol1_sl6_win2_fa10_dm256_nh4_el3_itr0 --save_pred --inverse
+```
+
+if want to include categorical dataset:
+```
+python eval_crossformer.py --setting_name Crossformer_Entire_Netflow_il1_ol1_sl6_win2_fa10_dm256_nh4_el3_itr0  --save_pred --inverse
+```
+
+* pcap 
+```
+python eval_crossformer.py --setting_name Crossformer_PCAP_il1_ol1_sl6_win2_fa10_dm256_nh4_el3_itr0 --save_pred --inverse
+```
+
+### Step 3: Synthetic data generation (Post-process) -- only for generation 
 
 * netflow/pcap -- please change the `generate_crossformer.py` accordingly. 
 
@@ -80,15 +117,15 @@ python generate_netflow_categorical_crossformer.py
 
 To view the csv file, 
 ```
-cat results/Crossformer_Netflow_il168_ol24_sl6_win2_fa10_dm256_nh4_el3_itr0/generated.csv | column -t -s, | less -S
+cat results/Crossformer_Netflow_il1_ol1_sl6_win2_fa10_dm256_nh4_el3_itr0/generated.csv | column -t -s, | less -S
 ```
 
 ```
-cat results/Crossformer_PCAP_il168_ol24_sl6_win2_fa10_dm256_nh4_el3_itr0/generated.csv | column -t -s, | less -S
+cat results/Crossformer_PCAP_il1_ol1_sl6_win2_fa10_dm256_nh4_el3_itr0/generated.csv | column -t -s, | less -S
 ```
 
 ```
-cat results/Crossformer_Entire_Netflow_il168_ol24_sl6_win2_fa10_dm256_nh4_el3_itr0/generated.csv | column -t -s, | less -S
+cat results/Crossformer_Entire_Netflow_il1_ol1_sl6_win2_fa10_dm256_nh4_el3_itr0/generated.csv | column -t -s, | less -S
 ```
 
 
